@@ -1,4 +1,4 @@
-mcp[http]>=1.26.0
+mcp>=1.26.0
 fastapi>=0.134.0
 uvicorn>=0.41.0
 pydantic>=2.12.5
