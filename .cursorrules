@@ -1,0 +1,115 @@
+# .cursorrules for codebase-audit-mcp
+
+## Project Context
+This is a Python 3.12 MCP (Model Context Protocol) server called `codebase-audit-mcp`.
+It performs static analysis of codebases: finds TODO markers, code smells, hardcoded secrets,
+and generates health reports. Runs 100% locally, no external API calls in core functionality.
+
+## Tech Stack
+- Python 3.12
+- mcp[http] — official MCP Python SDK with FastMCP high-level API
+- fastapi + uvicorn — HTTP server
+- No external API dependencies in core tools (ast, re, pathlib only)
+
+## Architecture Rules
+- All MCP tools are in `server/tools/` — one file per tool
+- Each tool file exports a single registration function: `register_{toolname}(mcp: FastMCP)`
+- All tool functions are pure (no side effects) EXCEPT generate_health_report which writes to memory store
+- Data models (TodoItem, SmellItem, etc.) live in `server/models.py` as Pydantic v2 models
+- Constants (default tags, severity levels, ignore patterns) live in `server/config.py`
+- The memory store for last report lives in `server/state.py` as a simple module-level dict
+
+## Code Style
+- Type hints everywhere — no untyped functions
+- Pydantic models for all return types — tools return model.model_dump() as list/dict
+- Docstrings on every tool function — they become MCP tool descriptions
+- Error handling: raise mcp.types.ToolError (not generic Exception) for user-facing errors
+- Binary file detection: try decode as utf-8, skip on UnicodeDecodeError
+- Always use pathlib.Path, never os.path string manipulation
+
+## File Traversal Rules
+- Always skip: __pycache__, .git, node_modules, .venv, venv, dist, build, .mypy_cache
+- Skip binary extensions: .pyc, .pyo, .so, .dylib, .dll, .exe, .jpg, .png, .gif, .pdf, .zip
+- Max file size to scan: 1 MB (skip larger files with a warning in output)
+
+## Testing
+- Tests are in `tests/` using pytest
+- Each tool has its own test file: `tests/test_scan_todos.py` etc.
+- Test fixtures (small code files with known issues) are in `tests/fixtures/`
+- smoke test entrypoint is `server/smoke.py` — it starts the server, calls /health, calls each tool
+
+## Docker
+- Base image: python:3.12-slim
+- No root user in container
+- ENTRYPOINT ["python", "main.py"], CMD ["serve"]
+- "serve" starts uvicorn on 0.0.0.0:8000
+- "smoke" runs server/smoke.py
+
+## What NOT to do
+- Do NOT use subprocess for core analysis (use ast and re modules)
+- Do NOT store analysis results on disk (use in-memory state only)
+- Do NOT make HTTP calls inside tools
+- Do NOT use print() for logging — use loguru module
+- Do NOT hardcode paths — always accept path as parameter
+- Do NOT scan files outside the given path (no path traversal)
+```
+
+---
+
+## 5. Структура файлов проекта
+```
+codebase-audit-mcp/
+│
+├── .cursorrules                    # правила для Cursor AI (выше)
+├── .env.example                    # пустой шаблон без секретов
+├── .gitignore
+├── Dockerfile
+├── requirements.txt
+├── main.py                         # точка входа: python main.py serve / smoke
+│
+├── server/
+│   ├── __init__.py
+│   ├── app.py                      # сборка FastAPI + FastMCP приложения
+│   ├── config.py                   # константы: теги, паттерны, ignored dirs
+│   ├── logging_config.py           # конфигурация loguru
+│   ├── models.py                   # Pydantic-модели: TodoItem, SmellItem, HealthReport
+│   ├── state.py                    # in-memory хранилище последнего отчёта
+│   ├── smoke.py                    # скрипт быстрой проверки для CMD smoke
+│   │
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── scan_todos.py           # tool: scan_todos
+│   │   ├── find_code_smells.py     # tool: find_code_smells
+│   │   └── generate_report.py     # tool: generate_health_report
+│   │
+│   ├── resources/
+│   │   ├── __init__.py
+│   │   ├── audit_rules.py          # resource: config://audit-rules
+│   │   └── last_report.py          # resource: report://last
+│   │
+│   └── prompts/
+│       ├── __init__.py
+│       └── templates.py            # prompts: full_audit, quick_secrets_check, standup_prep
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_scan_todos.py
+│   ├── test_find_code_smells.py
+│   ├── test_generate_report.py
+│   └── fixtures/
+│       ├── sample_with_todos.py    # файл с известными TODO/FIXME
+│       ├── sample_with_smells.py   # файл с секретами, eval(), длинными функциями
+│       └── sample_clean.py         # чистый файл — проверка false positives
+│
+├── demo_project/                   # тестовый мини-проект для DEMO.md
+│   ├── README.md
+│   ├── app/
+│   │   ├── main.py                 # намеренные TODO, захардкоженный токен
+│   │   ├── database.py             # SQL через format(), bare except
+│   │   └── utils.py                # длинная функция, magic numbers
+│   ├── config/
+│   │   └── settings.py             # password = "supersecret123"
+│   └── requirements.txt
+│
+├── README.md
+└── DEMO.md
