@@ -65,9 +65,10 @@ codebase-audit-mcp/
 │
 ├── .cursorrules                    # правила для Cursor AI (выше)
 ├── .env.example                    # пустой шаблон без секретов
-├── SPEC.md                         # описание спецификации проекта
 ├── .gitignore
 ├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
 ├── requirements.txt
 ├── main.py                         # точка входа: python main.py serve / smoke
 │
@@ -115,5 +116,6 @@ codebase-audit-mcp/
 │   │   └── settings.py             # password = "supersecret123"
 │   └── requirements.txt
 │
+├── SPEC.md                         # описание спецификации проекта
 ├── README.md
 └── DEMO.md
