@@ -1,0 +1,40 @@
+services:
+
+  serve:
+    image: codebase-audit-mcp
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ${PROJECT_PATH:-/tmp}:/workspace:ro
+
+    environment:
+      - PYTHONUNBUFFERED=1
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    command: serve
+
+  smoke:
+    image: codebase-audit-mcp
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - PYTHONUNBUFFERED=1
+
+    command: smoke
