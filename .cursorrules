@@ -1,5 +1,8 @@
 # .cursorrules for codebase-audit-mcp
 
+## Specification
+Full tool/resource/prompt contracts are in SPEC.md in the project root.
+
 ## Project Context
 This is a Python 3.12 MCP (Model Context Protocol) server called `codebase-audit-mcp`.
 It performs static analysis of codebases: finds TODO markers, code smells, hardcoded secrets,
