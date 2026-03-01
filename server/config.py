@@ -14,6 +14,14 @@ IGNORED_DIRS = {
     ".pytest_cache",
 }
 
+IGNORED_EXTENSIONS = {
+    ".lock",      # poetry.lock, package-lock.json
+    ".sum",       # go.sum
+    ".min.js",    # минифицированный JS
+    ".min.css",   # минифицированный CSS
+    ".map",       # source maps
+}
+
 BINARY_EXTENSIONS = {
     ".pyc",
     ".pyo",
