@@ -15,6 +15,7 @@ from server.config import (
     LONG_FUNCTION_THRESHOLD,
     HIGH_COMPLEXITY_THRESHOLD,
     COMMENTED_BLOCK_THRESHOLD,
+    IGNORED_EXTENSIONS,
 )
 from server.models import SmellItem
 
@@ -27,6 +28,15 @@ def _iter_text_files(root: Path):
         if any(part in IGNORED_DIRS for part in path.parts):
             continue
         if path.suffix.lower() in BINARY_EXTENSIONS:
+            continue
+        if path.suffix.lower() in IGNORED_EXTENSIONS:
+            continue
+        if path.name in {
+            "poetry.lock",
+            "package-lock.json",
+            "yarn.lock",
+            "Pipfile.lock",
+        }:
             continue
         try:
             if path.stat().st_size > MAX_FILE_SIZE_BYTES:
