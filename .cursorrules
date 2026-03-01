@@ -80,7 +80,7 @@ codebase-audit-mcp/
 │   │   ├── __init__.py
 │   │   ├── scan_todos.py           # tool: scan_todos
 │   │   ├── find_code_smells.py     # tool: find_code_smells
-│   │   └── generate_report.py     # tool: generate_health_report
+│   │   └── generate_report.py      # tool: generate_health_report
 │   │
 │   ├── resources/
 │   │   ├── __init__.py
