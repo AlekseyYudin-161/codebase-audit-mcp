@@ -11,6 +11,7 @@ from server.config import (
     IGNORED_DIRS,
     BINARY_EXTENSIONS,
     MAX_FILE_SIZE_BYTES,
+    IGNORED_EXTENSIONS,
 )
 
 from server.models import TodoItem
@@ -37,7 +38,7 @@ def _collect_todos(root: Path) -> list[TodoItem]:
     # Паттерн: один из тегов, затем опционально ':', '-', скобки, пробелы и текст
     tags_re = "|".join(re.escape(t) for t in DEFAULT_TAGS)
     tag_pattern = re.compile(
-        rf"\b({tags_re})\s*[:\-(\[]?\s*(.*)",
+        rf"(?:#|//|/\*|<!--)\s*\b({tags_re})\b\s*[:\-(\[]?\s*(.*)",
         re.IGNORECASE,
     )
 
@@ -49,6 +50,15 @@ def _collect_todos(root: Path) -> list[TodoItem]:
         if any(part in IGNORED_DIRS for part in path.parts):
             continue
         if path.suffix.lower() in BINARY_EXTENSIONS:
+            continue
+        if path.suffix.lower() in IGNORED_EXTENSIONS:
+            continue
+        if path.name in {
+            "poetry.lock",
+            "package-lock.json",
+            "yarn.lock",
+            "Pipfile.lock",
+        }:
             continue
         try:
             if path.stat().st_size > MAX_FILE_SIZE_BYTES:
