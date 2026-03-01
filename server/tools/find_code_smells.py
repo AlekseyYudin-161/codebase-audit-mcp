@@ -205,6 +205,22 @@ def _smells_python_ast(path: Path, text: str, rel_path: str) -> list[SmellItem]:
 
 
 def _collect_smells(root: Path) -> list[SmellItem]:
+    """
+    Recursively scans a directory for code smells.
+
+    Args:
+        root: Path to the directory root.
+
+    Returns:
+        list of SmellItem objects found in the directory.
+
+    Raises:
+        ValueError: if the path does not exist or is not a directory.
+    """
+    if not root.exists():
+        raise ValueError(f"Path does not exist: {root}")
+    if not root.is_dir():
+        raise ValueError(f"Path is not a directory: {root}")
     items: list[SmellItem] = []
     for path, text in _iter_text_files(root):
         rel_path = str(path.relative_to(root)) if path != root else path.name
