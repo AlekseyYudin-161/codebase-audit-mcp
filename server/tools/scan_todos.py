@@ -17,6 +17,22 @@ from server.models import TodoItem
 
 
 def _collect_todos(root: Path) -> list[TodoItem]:
+    """
+    Recursively scans a directory for TODO/FIXME markers and similar markers.
+
+    Args:
+        root: Path to the directory root.
+
+    Returns:
+        list of TodoItem objects found in the directory.
+
+    Raises:
+        ValueError: if the path does not exist or is not a directory.
+    """
+    if not root.exists():
+        raise ValueError(f"Path does not exist: {root}")
+    if not root.is_dir():
+        raise ValueError(f"Path is not a directory: {root}")
     items: list[TodoItem] = []
     # Паттерн: один из тегов, затем опционально ':', '-', скобки, пробелы и текст
     tags_re = "|".join(re.escape(t) for t in DEFAULT_TAGS)
