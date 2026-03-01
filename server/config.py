@@ -1,5 +1,7 @@
 """All the constants used in the application."""
 
+import os
+
 DEFAULT_TAGS = ["TODO", "FIXME", "HACK", "XXX", "NOTE", "DEPRECATED"]
 
 IGNORED_DIRS = {
@@ -36,8 +38,6 @@ BINARY_EXTENSIONS = {
     ".gz",
 }
 
-MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB - можно увеличить до 5 MB
-
 SECRET_PATTERNS = [
     (r'(?i)(password|passwd|pwd)\s*=\s*["\'][^"\']{4,}["\']', "Hardcoded password"),
     (r'(?i)(api_key|apikey|api-key)\s*=\s*["\'][^"\']{8,}["\']', "Hardcoded API key"),
@@ -47,6 +47,7 @@ SECRET_PATTERNS = [
     (r"(?i)bearer\s+[a-zA-Z0-9\-_]{20,}", "Bearer token in code"),
 ]
 
-LONG_FUNCTION_THRESHOLD = 50  # строк
-HIGH_COMPLEXITY_THRESHOLD = 10  # число ветвлений
-COMMENTED_BLOCK_THRESHOLD = 5  # строк подряд
+MAX_FILE_SIZE_BYTES = int(os.environ.get("MAX_FILE_SIZE_BYTES", str(1 * 1024 * 1024)))
+LONG_FUNCTION_THRESHOLD = int(os.environ.get("LONG_FUNCTION_THRESHOLD", "50"))
+HIGH_COMPLEXITY_THRESHOLD = int(os.environ.get("HIGH_COMPLEXITY_THRESHOLD", "10"))
+COMMENTED_BLOCK_THRESHOLD = int(os.environ.get("COMMENTED_BLOCK_THRESHOLD", "5"))
