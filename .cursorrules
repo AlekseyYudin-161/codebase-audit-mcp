@@ -65,6 +65,7 @@ codebase-audit-mcp/
 │
 ├── .cursorrules                    # правила для Cursor AI (выше)
 ├── .env.example                    # пустой шаблон без секретов
+├── SPEC.md                         # описание спецификации проекта
 ├── .gitignore
 ├── Dockerfile
 ├── requirements.txt
