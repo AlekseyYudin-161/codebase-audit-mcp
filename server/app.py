@@ -13,14 +13,14 @@ from server.tools.find_code_smells import register_find_code_smells
 from server.tools.generate_report import register_generate_report
 from server.resources.audit_rules import register_audit_rules
 from server.resources.last_report import register_last_report
-# from server.prompts.templates import register_templates
+from server.prompts.templates import register_templates
 
 register_scan_todos(mcp)
 register_find_code_smells(mcp)
 register_generate_report(mcp)
 register_audit_rules(mcp)
 register_last_report(mcp)
-# register_templates(mcp)
+register_templates(mcp)
 
 # Получаем приложение MCP
 app = mcp.streamable_http_app()
