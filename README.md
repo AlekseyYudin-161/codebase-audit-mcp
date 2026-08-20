@@ -1,4 +1,14 @@
 
+## About (EN)
+
+A local MCP (Model Context Protocol) server for static codebase auditing: finds TODO/FIXME/HACK/XXX/NOTE/DEPRECATED markers, hardcoded secrets, dangerous `eval`/`exec` calls, and overly long or complex functions (Python AST + regex), then produces an aggregated JSON health report. Fully offline — no external APIs.
+
+Plugs into Cursor, Claude Desktop, or any MCP-compatible client, so you get a codebase health report without leaving the IDE. Tools: `scan_todos`, `find_code_smells`, `generate_report`; resources: `config://audit-rules`, `report://last`; prompts: `full_audit`, `quick_secrets_check`, `standup_prep`. Dockerized, with a `/health` endpoint and smoke tests.
+
+4th of 50 at the Dev-to-Dev: Agentic Engineering Challenge ([leaderboard](https://codenrock.com/contests/dev-to-dev-agentic-engineering-challenge#leaderboard)); [write-up on Habr](https://habr.com/ru/articles/1034362/) (RU). The rest of this README is in Russian.
+
+------------------------
+
 > Локальный MCP-сервер для статического анализа кодовой базы: находит TODO-/FIXME-/ прочие маркеры, захардкоженные секреты, code smells (уязвимости, переусложненные функции, слишком длинные функции) и генерирует отчёты о состоянии проекта. Работает полностью офлайн — без внешних API.
 
 ---
